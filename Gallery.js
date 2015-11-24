@@ -1,6 +1,3 @@
-/**
- * Created by rancongjie on 15/11/22.
- */
 (function () {
   function $(s) {
     return document.querySelectorAll(s);
@@ -29,6 +26,9 @@
     this.imgDisc = $('.gallery-pic-disc')[0];
     this.prevBtn = $('.gallery-prev-btn')[0];
     this.nextBtn = $('.gallery-next-btn')[0];
+    this.picTitle =$('.gallery-pic-title')[0];
+    this.picIndex =$('.gallery-pic-index')[0];
+    this.closeBtn =$('.gallery-btn-close')[0];
     this.groupName = null;
     this.groupDate = [];
     this.bodyNode.addEventListener('click', function (ev) {
@@ -40,18 +40,45 @@
         if (self.groupName !== groupName) {
           self.groupName = groupName;
           self.getGroupDate();
-          self.initialPopUP(target);
-
-
         }
+        self.initialPopUp(target);
+        self.shadeMask.addEventListener('click', function () {
+          self.move(self.popUp,{opacity:0}, function () {
+            self.initImgCount();
+            self.popUp.style.display = 'none';
+          });
+          self.move(this,{opacity:0}, function () {
+            self.initImgCount();
+            self.shadeMask.style.display = 'none';
+
+          });
+        });
+        self.closeBtn.addEventListener('click', function () {
+          self.move(self.popUp,{opacity:0}, function () {
+            self.initImgCount();
+            self.popUp.style.display = 'none';
+          });
+          self.move(self.shadeMask,{opacity:0}, function () {
+            self.initImgCount();
+            self.shadeMask.style.display = 'none';
+          });
+        })
       }
     });
   }
 
   Gallery.prototype = {
-    initialPopUP: function (target) {
+    initImgCount: function () {
+      this.imgContent.style.width = 0+'px';
+      this.imgContent.style.height = 0+'px';
+    },
+    initialPopUp: function (target) {
       this.img.style.display = 'none';
       this.imgDisc.style.display = 'none';
+      this.popUp.style.display = 'block';
+      this.popUp.style.top = -800 +'px';
+      this.popUp.style.width = 0+'px';
+      this.popUp.style.height= 0+'px';
       var source = target.getAttribute('data-source');
       var id = target.getAttribute('data-id');
       this.index = this.getIndexOf(id);
@@ -60,7 +87,7 @@
       } else if (this.index === this.groupDate.length - 1) {
         this.nextBtn.className.replace(' show', '');
         this.prevBtn.className += ' show';
-      }else {
+      } else {
         this.prevBtn.className += ' show';
         this.nextBtn.className += ' show';
       }
@@ -79,32 +106,67 @@
     show: function (source, id) {
       var self = this;
       self.shadeMask.style.display = "block";
+      self.popUp.style.display = 'block';
+
       self.move(self.shadeMask, {opacity: 50});
-      var clientHeight = self.bodyNode.clientHeight;
-      var clientWidth = self.bodyNode.clientWidth;
-      self.popUp.style.width = clientWidth / 2 + 10 + 'px';
-      self.popUp.style.height = clientHeight / 2 + 10 + 'px';
-      self.popUp.style.marginLeft = -(clientWidth / 2 + 10) / 2 + 'px';
-      self.move(self.popUp, {top: (clientHeight - (clientHeight / 2 + 10)) / 2}, function () {
+      var clientHeight = window.innerHeight;
+      var clientWidth = window.innerWidth;
+
+      self.popUp.style.width = Math.floor(clientWidth / 2 + 10) + 'px';
+      self.popUp.style.height = Math.floor(clientHeight / 2 + 10) + 'px';
+      self.popUp.style.marginLeft = Math.floor(-(clientWidth / 2 + 10) / 2) + 'px';
+      self.move(self.popUp, {top: Math.floor((clientHeight - (clientHeight / 2 + 10)) / 2),opacity :100}, function () {
         self.loadSize(source);
       });
 
     },
     loadSize: function (source) {
       var self = this;
-      this.loadImg(source,function(){
-        self.img.setAttribute('src',source);
+      self.img.style.height = 0;
+      self.img.style.width = 0;
+      this.loadImg(source, function () {
+        self.img.setAttribute('src', source);
         var imgHeight = self.img.height;
         var imgWidth = self.img.width;
-        self.move(self.popUp,{height:imgHeight+10,width:imgWidth+10,marginLeft:-(imgWidth+10)/2});
-        self.move(self.imgContent,{})
-
-
+        self.changeImg(imgWidth, imgHeight);
       });
 
     },
-    loadImg: function (source,callback) {
-      var img =new Image();
+    changeImg: function (imgWidth, imgHeight) {
+      var self = this;
+      var clientWidth = window.innerWidth;
+      var clientHeight = window.innerHeight;
+      var scale = Math.min(clientWidth / (imgWidth + 10), clientHeight / (imgHeight + 10), 1);
+      imgHeight = imgHeight * scale;
+      imgWidth = imgWidth * scale;
+      self.move(self.popUp, {
+        height: Math.floor(imgHeight),
+        width: Math.floor(imgWidth),
+        marginLeft: Math.floor(-(imgWidth) / 2),
+        top: Math.floor((clientHeight - imgHeight) / 2)
+      }, function () {
+        self.move(self.imgContent, {
+          height: Math.floor(imgHeight - 10),
+          width: Math.floor(imgWidth - 10)
+        });
+        self.img.style.display = 'block';
+        self.imgDisc.style.display = 'block';
+        self.picIndex.innerText='图片索引:'+self.index+1+'of '+self.groupDate.length;
+        self.picTitle.innerText=self.groupDate[self.index].title;
+      });
+      self.move(self.img, {
+        height: Math.floor(imgHeight - 10),
+        width: Math.floor(imgWidth - 10),
+
+      }, function () {
+        self.move(self.img, {opacity: 100}, function () {
+          self.move(self.imgDisc,{opacity:50});
+        })
+      });
+
+    },
+    loadImg: function (source, callback) {
+      var img = new Image();
       img.onload = function () {
         callback();
       };
@@ -113,7 +175,7 @@
     renderNode: function () {
       var inner = '<div class="gallery-pic-content">' +
         '<span class="gallery-btn gallery-prev-btn"></span>' +
-        '<img class="gallery-pic" src="image/2-2.jpg">' +
+        '<img class="gallery-pic">' +
         '<span class="gallery-btn gallery-next-btn"></span>' +
         '</div>' +
         '<div class="gallery-pic-disc">' +
@@ -149,7 +211,7 @@
           else {
             cur = parseInt(getStyle(obj, name));
           }
-          var speed = (json[name] - cur) / 5;
+          var speed = (json[name] - cur) / 3;
           speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
           if (cur != json[name]) {
             oStop = false;
