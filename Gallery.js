@@ -26,9 +26,9 @@
     this.imgDisc = $('.gallery-pic-disc')[0];
     this.prevBtn = $('.gallery-prev-btn')[0];
     this.nextBtn = $('.gallery-next-btn')[0];
-    this.picTitle =$('.gallery-pic-title')[0];
-    this.picIndex =$('.gallery-pic-index')[0];
-    this.closeBtn =$('.gallery-btn-close')[0];
+    this.picTitle = $('.gallery-pic-title')[0];
+    this.picIndex = $('.gallery-pic-index')[0];
+    this.closeBtn = $('.gallery-btn-close')[0];
     this.groupName = null;
     this.groupDate = [];
     this.bodyNode.addEventListener('click', function (ev) {
@@ -43,22 +43,22 @@
         }
         self.initialPopUp(target);
         self.shadeMask.addEventListener('click', function () {
-          self.move(self.popUp,{opacity:0}, function () {
+          self.move(self.popUp, {opacity: 0}, function () {
             self.initImgCount();
             self.popUp.style.display = 'none';
           });
-          self.move(this,{opacity:0}, function () {
+          self.move(this, {opacity: 0}, function () {
             self.initImgCount();
             self.shadeMask.style.display = 'none';
 
           });
         });
         self.closeBtn.addEventListener('click', function () {
-          self.move(self.popUp,{opacity:0}, function () {
+          self.move(self.popUp, {opacity: 0}, function () {
             self.initImgCount();
             self.popUp.style.display = 'none';
           });
-          self.move(self.shadeMask,{opacity:0}, function () {
+          self.move(self.shadeMask, {opacity: 0}, function () {
             self.initImgCount();
             self.shadeMask.style.display = 'none';
           });
@@ -69,16 +69,16 @@
 
   Gallery.prototype = {
     initImgCount: function () {
-      this.imgContent.style.width = 0+'px';
-      this.imgContent.style.height = 0+'px';
+      this.imgContent.style.width = 0 + 'px';
+      this.imgContent.style.height = 0 + 'px';
     },
     initialPopUp: function (target) {
       this.img.style.display = 'none';
       this.imgDisc.style.display = 'none';
       this.popUp.style.display = 'block';
-      this.popUp.style.top = -800 +'px';
-      this.popUp.style.width = 0+'px';
-      this.popUp.style.height= 0+'px';
+      this.popUp.style.top = -800 + 'px';
+      this.popUp.style.width = 0 + 'px';
+      this.popUp.style.height = 0 + 'px';
       var source = target.getAttribute('data-source');
       var id = target.getAttribute('data-id');
       this.index = this.getIndexOf(id);
@@ -115,7 +115,7 @@
       self.popUp.style.width = Math.floor(clientWidth / 2 + 10) + 'px';
       self.popUp.style.height = Math.floor(clientHeight / 2 + 10) + 'px';
       self.popUp.style.marginLeft = Math.floor(-(clientWidth / 2 + 10) / 2) + 'px';
-      self.move(self.popUp, {top: Math.floor((clientHeight - (clientHeight / 2 + 10)) / 2),opacity :100}, function () {
+      self.move(self.popUp, {top: Math.floor((clientHeight - (clientHeight / 2 + 10)) / 2), opacity: 100}, function () {
         self.loadSize(source);
       });
 
@@ -151,8 +151,8 @@
         });
         self.img.style.display = 'block';
         self.imgDisc.style.display = 'block';
-        self.picIndex.innerText='图片索引:'+self.index+1+'of '+self.groupDate.length;
-        self.picTitle.innerText=self.groupDate[self.index].title;
+        self.picIndex.innerText = '图片索引:' + self.index + 1 + 'of ' + self.groupDate.length;
+        self.picTitle.innerText = self.groupDate[self.index].title;
       });
       self.move(self.img, {
         height: Math.floor(imgHeight - 10),
@@ -160,7 +160,7 @@
 
       }, function () {
         self.move(self.img, {opacity: 100}, function () {
-          self.move(self.imgDisc,{opacity:50});
+          self.move(self.imgDisc, {opacity: 50});
         })
       });
 

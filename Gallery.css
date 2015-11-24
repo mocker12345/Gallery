@@ -55,6 +55,7 @@
 .show {
   display: inline;
 }
+
 .gallery-next-btn {
   background: url("icon/next.png") no-repeat right center;
   right: 0;
@@ -81,10 +82,12 @@
   opacity: 0;
   filter: alpha(opacity:0);
 }
+
 .gallery-pic-title {
   color: #fff;
 
 }
+
 .gallery-pic-index {
   color: #f0f8ff;
   font-size: 12px;
