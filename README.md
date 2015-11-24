@@ -1,7 +1,7 @@
 # Gallery
 <img src='http://img1.chetx.com/news/2009_07/02/1246501433818.jpg'/>
 
-Gallery（画廊）组件。
+纯原生js画廊Gallery组件 v 1.0
 
     <img data-role="gallery" 
     data-group="group-1" 
