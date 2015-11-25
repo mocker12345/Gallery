@@ -88,38 +88,49 @@
       if (dir === 'next' && this.flag) {
         this.flag = false;
         this.index++;
-        self.img.style.opacity=0;
+        this.img.style.opacity = 0;
         this.imgDisc.style.opacity = 0;
-        self.imgContent.style.visibility = 'hidden';
+        this.imgContent.style.visibility = 'hidden';
+        this.changeBtn();
         this.loadSize(self.groupDate[self.index].src);
       } else if (dir === 'prev' && this.flag) {
         this.flag = false;
-        alert(2);
+        this.index--;
+        this.img.style.opacity = 0;
+        this.imgContent.style.visibility = 'hidden';
+        this.changeBtn();
+        this.loadSize(self.groupDate[self.index].src);
       }
     },
     initImgCount: function () {
       this.imgContent.style.width = 0 + 'px';
       this.imgContent.style.height = 0 + 'px';
     },
+    changeBtn: function () {
+      var res = /show/g;
+      if (this.index === 0 && this.groupDate.length !== 1) {
+        if (!this.nextBtn.className.match(res))this.nextBtn.className += ' show';
+        this.prevBtn.className = this.prevBtn.className.replace(/\sshow/g, '');
+      } else if (this.index === this.groupDate.length - 1 && this.groupDate.length !== 1) {
+        this.nextBtn.className = this.nextBtn.className.replace(/\sshow/g, '');
+        if (!this.prevBtn.className.match(res))this.prevBtn.className += ' show';
+      } else if (this.groupDate.length !== 1) {
+        if (!this.prevBtn.className.match(res))this.prevBtn.className += ' show';
+        if (!this.nextBtn.className.match(res))this.nextBtn.className += ' show';
+      }
+    },
     initialPopUp: function (target) {
       this.img.style.opacity = 0;
       this.imgDisc.style.opacity = 0;
       this.popUp.style.display = 'block';
+      this.imgContent.style.visibility = 'hidden';
       this.popUp.style.top = -800 + 'px';
       this.popUp.style.width = 0 + 'px';
       this.popUp.style.height = 0 + 'px';
       var source = target.getAttribute('data-source');
       var id = target.getAttribute('data-id');
       this.index = this.getIndexOf(id);
-      if (this.index === 0) {
-        this.nextBtn.className += ' show';
-      } else if (this.index === this.groupDate.length - 1) {
-        this.nextBtn.className.replace(' show', '');
-        this.prevBtn.className += ' show';
-      } else {
-        this.prevBtn.className += ' show';
-        this.nextBtn.className += ' show';
-      }
+      this.changeBtn();
       this.show(source, id);
     },
     getIndexOf: function (id) {
@@ -132,7 +143,7 @@
       }
       return index;
     },
-    show: function (source, id) {
+    show: function (source) {
       var self = this;
       self.shadeMask.style.display = "block";
       self.popUp.style.display = 'block';
@@ -140,7 +151,6 @@
       self.move(self.shadeMask, {opacity: 50});
       var clientHeight = window.innerHeight;
       var clientWidth = window.innerWidth;
-
       self.popUp.style.width = Math.floor(clientWidth / 2 + 10) + 'px';
       self.popUp.style.height = Math.floor(clientHeight / 2 + 10) + 'px';
       self.popUp.style.marginLeft = Math.floor(-(clientWidth / 2 + 10) / 2) + 'px';
@@ -185,10 +195,10 @@
           }, function () {
             self.imgContent.style.visibility = 'visible';
             self.imgDisc.style.display = 'block';
-            self.picIndex.innerText = '图片索引:' + (self.index + 1) + 'of ' + self.groupDate.length;
+            self.picIndex.innerText = '图片索引:' + (self.index + 1) + ' of ' + self.groupDate.length;
             self.picTitle.innerText = self.groupDate[self.index].title;
             self.move(self.img, {opacity: 100}, function () {
-              self.move(self.imgDisc, {opacity: 50});
+              self.move(self.imgDisc, {opacity: 70});
               self.flag = true;
             });
           });
@@ -203,7 +213,8 @@
       img.src = source;
     },
     renderNode: function () {
-      var inner = '<div class="gallery-pic-content">' +
+      var inner =
+        '<div class="gallery-pic-content">' +
         '<span class="gallery-btn gallery-prev-btn"></span>' +
         '<img class="gallery-pic">' +
         '<span class="gallery-btn gallery-next-btn"></span>' +
@@ -259,10 +270,8 @@
           if (fun)
             fun();
         }
-
       }, 30);
     }
-
   };
   var Ga = new Gallery();
 })();

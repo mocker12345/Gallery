@@ -20,7 +20,7 @@
   position: fixed;
   top: -800px;
   left: 50%;
-  background: #fff;
+  background: #fff url("icon/loading.GIF") no-repeat center center;
   z-index: 10001;
 
 }
