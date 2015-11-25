@@ -31,6 +31,7 @@
     this.closeBtn = $('.gallery-btn-close')[0];
     this.groupName = null;
     this.groupDate = [];
+    this.flag = true;
     this.bodyNode.addEventListener('click', function (ev) {
       var event = ev || event;
       event.stopPropagation();
@@ -42,7 +43,9 @@
           self.getGroupDate();
         }
         self.initialPopUp(target);
-        self.shadeMask.addEventListener('click', function () {
+        self.shadeMask.addEventListener('click', function (ev) {
+          var event = ev || event;
+          event.stopPropagation();
           self.move(self.popUp, {opacity: 0}, function () {
             self.initImgCount();
             self.popUp.style.display = 'none';
@@ -53,7 +56,9 @@
 
           });
         });
-        self.closeBtn.addEventListener('click', function () {
+        self.closeBtn.addEventListener('click', function (ev) {
+          var event = ev || event;
+          event.stopPropagation();
           self.move(self.popUp, {opacity: 0}, function () {
             self.initImgCount();
             self.popUp.style.display = 'none';
@@ -62,19 +67,43 @@
             self.initImgCount();
             self.shadeMask.style.display = 'none';
           });
-        })
+        });
+        self.nextBtn.addEventListener('click', function (e) {
+          var event = ev || event;
+          event.stopPropagation();
+          self.goto('next');
+        }, false);
+        self.prevBtn.addEventListener('click', function (e) {
+          var event = ev || event;
+          event.stopPropagation();
+          self.goto('prev');
+        }, false);
       }
     });
   }
 
   Gallery.prototype = {
+    goto: function (dir) {
+      var self = this;
+      if (dir === 'next' && this.flag) {
+        this.flag = false;
+        this.index++;
+        self.img.style.opacity=0;
+        this.imgDisc.style.opacity = 0;
+        self.imgContent.style.visibility = 'hidden';
+        this.loadSize(self.groupDate[self.index].src);
+      } else if (dir === 'prev' && this.flag) {
+        this.flag = false;
+        alert(2);
+      }
+    },
     initImgCount: function () {
       this.imgContent.style.width = 0 + 'px';
       this.imgContent.style.height = 0 + 'px';
     },
     initialPopUp: function (target) {
-      this.img.style.display = 'none';
-      this.imgDisc.style.display = 'none';
+      this.img.style.opacity = 0;
+      this.imgDisc.style.opacity = 0;
       this.popUp.style.display = 'block';
       this.popUp.style.top = -800 + 'px';
       this.popUp.style.width = 0 + 'px';
@@ -122,8 +151,8 @@
     },
     loadSize: function (source) {
       var self = this;
-      self.img.style.height = 0;
-      self.img.style.width = 0;
+      self.img.style.height = 'auto';
+      self.img.style.width = 'auto';
       this.loadImg(source, function () {
         self.img.setAttribute('src', source);
         var imgHeight = self.img.height;
@@ -139,6 +168,7 @@
       var scale = Math.min(clientWidth / (imgWidth + 10), clientHeight / (imgHeight + 10), 1);
       imgHeight = imgHeight * scale;
       imgWidth = imgWidth * scale;
+      self.imgContent.style.visibility = 'none';
       self.move(self.popUp, {
         height: Math.floor(imgHeight),
         width: Math.floor(imgWidth),
@@ -148,22 +178,22 @@
         self.move(self.imgContent, {
           height: Math.floor(imgHeight - 10),
           width: Math.floor(imgWidth - 10)
+        }, function () {
+          self.move(self.img, {
+            height: Math.floor(imgHeight - 10),
+            width: Math.floor(imgWidth - 10)
+          }, function () {
+            self.imgContent.style.visibility = 'visible';
+            self.imgDisc.style.display = 'block';
+            self.picIndex.innerText = '图片索引:' + (self.index + 1) + 'of ' + self.groupDate.length;
+            self.picTitle.innerText = self.groupDate[self.index].title;
+            self.move(self.img, {opacity: 100}, function () {
+              self.move(self.imgDisc, {opacity: 50});
+              self.flag = true;
+            });
+          });
         });
-        self.img.style.display = 'block';
-        self.imgDisc.style.display = 'block';
-        self.picIndex.innerText = '图片索引:' + self.index + 1 + 'of ' + self.groupDate.length;
-        self.picTitle.innerText = self.groupDate[self.index].title;
       });
-      self.move(self.img, {
-        height: Math.floor(imgHeight - 10),
-        width: Math.floor(imgWidth - 10),
-
-      }, function () {
-        self.move(self.img, {opacity: 100}, function () {
-          self.move(self.imgDisc, {opacity: 50});
-        })
-      });
-
     },
     loadImg: function (source, callback) {
       var img = new Image();
@@ -211,7 +241,7 @@
           else {
             cur = parseInt(getStyle(obj, name));
           }
-          var speed = (json[name] - cur) / 3;
+          var speed = (json[name] - cur) / 2;
           speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
           if (cur != json[name]) {
             oStop = false;
