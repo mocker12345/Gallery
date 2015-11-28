@@ -1,0 +1,22 @@
+{
+  "name": "Gallery",
+  "main": "Gallery.js",
+  "homepage": "https://github.com/rancongjie/Gallery",
+  "authors": [
+    "rancongjie <95633676@qq.com>"
+  ],
+  "description": "画廊动画插件",
+  "moduleType": [],
+  "keywords": [
+    "gallery"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
